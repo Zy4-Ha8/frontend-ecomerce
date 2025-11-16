@@ -59,7 +59,7 @@ function AuthTable({
           </form>
         </div>
 
-        <div className="lg:w-[40%] overflow-hidden h-screen absolute lg:static top-160 w-full lg:w-none opacity-50 lg:opacity-100">
+        <div className="lg:w-[40%] overflow-hidden h-screen absolute lg:static top-160 w-full lg:w-none    lg:opacity-100">
           <img
             className="h-full  w-full object-cover rounded-4xl"
             src={authTableImage}
