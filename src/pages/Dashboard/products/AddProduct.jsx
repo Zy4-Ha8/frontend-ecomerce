@@ -1,0 +1,60 @@
+import React from "react";
+
+function AddProduct() {
+  const [formdata, setFormdata] = useState({
+    name: "",
+    username: "",
+    email: "",
+    role: "",
+    userAvatar: {},
+    password: "",
+  });
+
+  const inputsContent = [
+    {
+      name: "name",
+      type: "text",
+      placeholder: "add the name of the user",
+    },
+    {
+      name: "username",
+      type: "text",
+      placeholder: "add the username",
+    },
+    {
+      name: "email",
+      type: "email",
+      placeholder: "add the email of the user",
+    },
+    {
+      name: "role",
+      type: "text",
+      placeholder: "add the role of the user",
+    },
+    {
+      name: "avatar",
+      type: "file",
+      placeholder: "add the image of the user",
+    },
+    {
+      name: "password",
+      type: "password",
+      placeholder: "add your password",
+    },
+  ];
+  const handleInputChange = (e) => {
+    setFormdata({ ...formdata, [e.target.name]: e.target.value });
+  };
+  return (
+    <div>
+      <DashboardForm
+        headerText={"add new user"}
+        inputsCotent={inputsContent}
+        handleInputChange={handleInputChange}
+        submitButton={"Add New User"}
+      />
+    </div>
+  );
+}
+
+export default AddProduct;
