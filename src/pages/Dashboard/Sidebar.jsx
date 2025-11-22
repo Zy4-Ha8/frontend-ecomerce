@@ -10,12 +10,13 @@ import {
   Eye,
 } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 export default function AdminSidebar({ isSidebarOpen }) {
   const [activeItem, setActiveItem] = useState("dashboard");
   const [expandedMenus, setExpandedMenus] = useState({});
-
+  const pageWidth = useSelector((state) => state.pageWidth);
   const menuItems = [
     {
       id: "users",
@@ -62,16 +63,22 @@ export default function AdminSidebar({ isSidebarOpen }) {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex bg-gray-50">
       {/*  Sidebar */}
       <div
-        className={`bg-white shadow-lg transition-all duration-300 ${
-          isSidebarOpen ? "w-64" : "w-0"
-        } overflow-hidden`}
+        className={`bg-white shadow-lg transition-all duration-300 h-full  ${
+          pageWidth.isMoblie
+            ? isSidebarOpen
+              ? "absolute top-16 left-0 z-1000 h-full w-64"
+              : "absolute top-16 -left-65 z-1000 h-full w-64"
+            : isSidebarOpen
+            ? "w-64"
+            : "w-0"
+        }
+        
+        overflow-hidden`}
       >
         <div className="w-64">
-      
-
           {/* Navigation */}
           <nav className="p-4 h-[calc(100vh-64px-88px)] overflow-y-auto">
             <ul className="space-y-1">

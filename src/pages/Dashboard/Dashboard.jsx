@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
 import Topbar from "./Topbar";
+import { useSelector } from "react-redux";
 
 function Dashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+  const pageWidth = useSelector((state) => state.pageWidth);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!pageWidth.isMoblie);
+  console.log(pageWidth);
   return (
     <div>
       <Topbar
@@ -14,9 +16,17 @@ function Dashboard() {
       />
       <div className="flex ">
         <Sidebar isSidebarOpen={isSidebarOpen} />
-        <div className={`relative`}>
+        <div className={`relative w-full`}>
           <Outlet />
-         {/* {isSidebarOpen && <div className="absolute top-0 left-0 w-full h-full bg-black/80 z-100" ></div>} */}
+          <div
+            className={` transition-all duration-300 ${
+              pageWidth.isMoblie && isSidebarOpen ? "static" : "hidden"
+            }`}
+          >
+            <div
+              className={`absolute top-0 left-0 w-full h-full bg-black/80 z-100 `}
+            ></div>
+          </div>
         </div>
       </div>
     </div>

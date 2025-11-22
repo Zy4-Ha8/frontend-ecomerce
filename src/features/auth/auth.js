@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "universal-cookie";
-const apiUrl = "https://ecomerce-production-d4d4.up.railway.app";
+const apiUrl = import.meta.env.VITE_API_URL;
 const cookie = new Cookies();
 // Async thunk for registration
 export const registerUser = createAsyncThunk(
