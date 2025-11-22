@@ -63,7 +63,7 @@ export default function AdminSidebar({ isSidebarOpen }) {
   };
 
   return (
-    <div className="flex bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50">
       {/*  Sidebar */}
       <div
         className={`bg-white shadow-lg transition-all duration-300 h-full  ${

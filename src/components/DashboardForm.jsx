@@ -71,23 +71,43 @@ function DashboardForm({
       <form onSubmit={handleSubmit}>
         {inputsMap}
 
-        {errorMessage && <div>
-          <div className="bg-white p-6 rounded-lg  mt-5">
-            {errorMessage.length > 0 && (
-              <div className="text-red-600">
-                <p className="font-semibold mb-2">Errors:</p>
-                <ul className="space-y-1 text-sm">
-                  {errorMessage.map((error, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="text-red-500 mt-1">•</span>
-                      <span>{error}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+        {typeof errorMessage === Array && (
+          <div>
+            <div className="bg-white p-6 rounded-lg  mt-5">
+              {errorMessage?.length > 0 && (
+                <div className="text-red-600">
+                  <p className="font-semibold mb-2">Errors:</p>
+                  <ul className="space-y-1 text-sm">
+                    {errorMessage?.map((error, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-red-500 mt-1">•</span>
+                        <span>{error}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
-        </div>}
+        )}
+        {typeof errorMessage === "string" && (
+          <div>
+            <div className="bg-white p-6 rounded-lg  mt-5">
+              {errorMessage?.length > 0 && (
+                <div className="text-red-600">
+                  <p className="font-semibold mb-2">Errors:</p>
+                  <ul className="space-y-1 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-500 mt-1">•</span>
+                      <span>{errorMessage}</span>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <button className="bg-[#3a5b22] w-full hover:bg-[#3a5b22d7] cursor-pointer py-2 px-4 rounded-xl  text-white my-5">
           {submitButton}
         </button>
