@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function Topbar({ isSidebarOpen, setIsSidebarOpen }) {
   return (
     <div
-      className="h-16 flex items-center justify-between px-5 border-b border-gray-200"
+      className="h-16 flex items-center justify-between px-5 border-b border-gray-200 min-w-full"
       style={{ backgroundColor: "#3a5b22" }}
     >
       <div className=" flex items-center">
