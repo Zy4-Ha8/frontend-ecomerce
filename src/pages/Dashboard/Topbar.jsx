@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react";
+import { Home, Menu, X } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -17,8 +17,13 @@ function Topbar({ isSidebarOpen, setIsSidebarOpen }) {
         </button>
         <h1 className="text-white text-xl font-bold">Admin Panel</h1>
       </div>
-      <div className="bg-white px-5 py-2 rounded-2xl text-[#3a5b22]">
-        <Link to={"/"}>back to the home</Link>
+      <div className="bg-white px-2 py-1.5 rounded-2xl text-[#3a5b22]">
+        <Link to={"/"}>
+          {" "}
+          <span className="flex items-center justify-center gap-1">
+            <Home /> Home
+          </span>
+        </Link>
       </div>
     </div>
   );
