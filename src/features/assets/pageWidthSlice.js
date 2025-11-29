@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   width: window.innerWidth,
   isMoblie: window.innerWidth <= 640 ? true : false,
+  isTablet: window.innerWidth <= 1140 ? true : false,
 };
 
 const pageWidthSlice = createSlice({

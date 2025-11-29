@@ -10,10 +10,13 @@ const cookie = new Cookies();
 // Get all users
 export const getAllUsers = createAsyncThunk(
   "users/getAllUsers",
-  async (_, { rejectWithValue }) => {
+  async ({ limit, page, search }, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
     try {
-      const response = await axios.get(API_URL, {
+      const apiEndPoint = `${API_URL}/pagination?limit=${limit}&page=${page}${
+        search ? `&search=${search}` : ""
+      }`;
+      const response = await axios.get(apiEndPoint, {
         headers: { Authorization: "Bearer " + accessToken },
       });
       return response.data;
@@ -52,7 +55,7 @@ export const createUser = createAsyncThunk(
 
     try {
       const formData = new FormData();
-      
+
       Object.keys(userData).forEach((key) => {
         if (key === "userAvatar" && userData[key] instanceof File) {
           formData.append("file", userData[key]);
@@ -233,16 +236,12 @@ const userSlice = createSlice({
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.users.findIndex(
-          (user) =>
-            user._id === action.payload._id || user.id === action.payload.id
+          (user) => user.id === action.payload.id
         );
         if (index !== -1) {
           state.users[index] = action.payload;
         }
-        if (
-          state.currentUser?._id === action.payload._id ||
-          state.currentUser?.id === action.payload.id
-        ) {
+        if (state.currentUser?.id === action.payload.id) {
           state.currentUser = action.payload;
         }
         state.success = true;
@@ -262,15 +261,8 @@ const userSlice = createSlice({
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = state.users.filter(
-          (user) => user._id !== action.payload && user.id !== action.payload
-        );
-        if (
-          state.currentUser?._id === action.payload ||
-          state.currentUser?.id === action.payload
-        ) {
-          state.currentUser = null;
-        }
+        state.users.data = state.users.data.filter((user) => user.id !== action.payload);
+       
         state.success = true;
         state.error = null;
       })

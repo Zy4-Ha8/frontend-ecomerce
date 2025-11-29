@@ -12,6 +12,7 @@ import AddCategory from "./pages/Dashboard/categories/AddCategory";
 import Products from "./pages/Dashboard/products/Products";
 import AddProduct from "./pages/Dashboard/products/AddProduct";
 import Categories from "./pages/Dashboard/categories/Categories";
+import UpdateUser from "./pages/Dashboard/users/UpdateUser";
 function App() {
   return (
     <>
@@ -26,6 +27,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="add-user" element={<AddUser />} />
             <Route path="show-users" element={<Users />} />
+            <Route path="update-user/:id" element={<UpdateUser />} />
 
             <Route path="add-category" element={<AddCategory />} />
             <Route path="show-catgeories" element={<Categories />} />

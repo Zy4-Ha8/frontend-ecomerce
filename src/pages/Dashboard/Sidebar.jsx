@@ -67,7 +67,7 @@ export default function AdminSidebar({ isSidebarOpen }) {
       {/*  Sidebar */}
       <div
         className={`bg-white shadow-lg transition-all duration-300 h-full  ${
-          pageWidth.isMoblie
+          pageWidth.isTablet
             ? isSidebarOpen
               ? "absolute top-16 left-0 z-1000 h-full w-64"
               : "absolute top-16 -left-65 z-1000 h-full w-64"

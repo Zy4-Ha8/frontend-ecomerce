@@ -20,7 +20,7 @@ function Dashboard() {
           <Outlet />
           <div
             className={` transition-all duration-300 ${
-              pageWidth.isMoblie && isSidebarOpen ? "static" : "hidden"
+              pageWidth.isTablet && isSidebarOpen ? "static" : "hidden"
             }`}
           >
             <div
