@@ -1,16 +1,19 @@
 import {
+  Airplay,
   ArrowLeft,
   ArrowRight,
   Eraser,
   Pencil,
   Search,
   Settings,
+  Table,
   X,
 } from "lucide-react";
-import React from "react";
+import avatarFake from "../assets/images/avatarFake.png";
 import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Card from "./Card";
 
 function DashboardTable({
   pageHeader,
@@ -25,6 +28,8 @@ function DashboardTable({
   searchStuff,
   filterBySearch,
   clearSearch,
+  tableStuff,
+  cardStuff,
 }) {
   const globalWidth = useSelector((state) => state.pageWidth);
   const showHeader = tableHeaders.map((header) => (
@@ -32,7 +37,7 @@ function DashboardTable({
       {header}
     </th>
   ));
-  const showBody = usersList?.map((user, index) => (
+  const showTableBody = usersList?.map((user, index) => (
     <tr className="odd:bg-neutral-primary even:bg-[#3a5b2216] border-b border-default">
       {tableHeaders?.map((header) => (
         <td className="px-6 py-4">
@@ -65,11 +70,70 @@ function DashboardTable({
       </td>
     </tr>
   ));
-  console.log(showBody);
+  const table = (
+    <div className=" relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default rounded-md h-[564.8px] flex flex-col justify-between    ">
+      <table className="w-full text-sm text-center rtl:text-right text-body ">
+        <thead className="bg-neutral-secondary-soft border-b border-default ">
+          <tr>
+            {showHeader}
+            <th scope="col" className="px-6 py-3 font-medium bg-[#3a5b2216]">
+              actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>{showTableBody}</tbody>
+      </table>
+    </div>
+  );
+
+  const showCards = usersList.map((item) => (
+    <Card
+      image={item.userAvatar.url ? item.userAvatar.url : avatarFake}
+      name={item.name}
+      details={item.email}
+      onDelete={deleteUser}
+      id={item.id}
+    />
+  ));
+
   return (
     <div className="m-4">
       <div className="flex flex-col sm:flex-row  justify-between items-start sm:items-center mb-2">
-        <h1 className="text-2xl font-medium">{pageHeader}</h1>
+        <div>
+          <h1 className="text-2xl font-medium">{pageHeader}</h1>
+          <div className="flex items-center justify-center gap-1">
+            <span
+              className={`${
+                tableStuff.tableActive ? "bg-[#3a5b22]" : ""
+              } p-1 rounded-md cursor-pointer `}
+              onClick={() => {
+                if (!tableStuff.tableActive) {
+                  tableStuff.setTableActive(true);
+                  cardStuff.setCardActive(false);
+                }
+              }}
+            >
+              <Table
+                color={`${tableStuff.tableActive ? "white" : "#3a5b22"}`}
+              />
+            </span>
+            <span
+              className={`${
+                cardStuff.cardActive ? "bg-[#3a5b22]" : ""
+              } p-1 rounded-md cursor-pointer`}
+              onClick={() => {
+                if (!cardStuff.cardActive) {
+                  cardStuff.setCardActive(true);
+                  tableStuff.setTableActive(false);
+                }
+              }}
+            >
+              <Airplay
+                color={`${cardStuff.cardActive ? "white" : "#3a5b22"}`}
+              />
+            </span>
+          </div>
+        </div>
 
         <form
           className="flex justify-between bg-[#3a5b2216] w-full  sm:w-[320px] p-3 rounded-md"
@@ -82,7 +146,7 @@ function DashboardTable({
             onChange={(e) => searchStuff.setSearch(e.target.value)}
             className="border-none outline-none "
           />
-          <div className="flex">
+          <div className="flex justify-center items-center gap-1">
             <button>
               <Search size={globalWidth.isMoblie ? 15 : 20} />
             </button>
@@ -99,20 +163,12 @@ function DashboardTable({
       </div>
 
       {/* table */}
-      <div className=" relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default rounded-md h-[564.8px] flex flex-col justify-between    ">
-        <table className="w-full text-sm text-center rtl:text-right text-body ">
-          <thead className="bg-neutral-secondary-soft border-b border-default ">
-            <tr>
-              {showHeader}
-              <th scope="col" className="px-6 py-3 font-medium bg-[#3a5b2216]">
-                actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>{showBody}</tbody>
-        </table>
-      </div>
-
+      {tableStuff.tableActive && table}
+      {cardStuff.cardActive && (
+        <div className="flex flex-wrap items-center justify-center gap-4 h-[564.8px] overflow-y-auto p-2">
+          {showCards}
+        </div>
+      )}
       {/* Pagination */}
       <div>
         {totalPages > 0 && (

@@ -19,7 +19,8 @@ const Users = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-
+  const [tableActive, setTableActive] = useState(true);
+  const [cardActive, setCardActive] = useState(false);
   useEffect(() => {
     if (search === "") {
       dispatch(getAllUsers({ limit: 8, page: currentPage }));
@@ -41,7 +42,7 @@ const Users = () => {
   const filterBySearch = (e) => {
     e.preventDefault();
     if (search) {
-      setCurrentPage(1)
+      setCurrentPage(1);
       dispatch(getAllUsers({ limit: 8, page: currentPage, search }));
     }
   };
@@ -68,6 +69,8 @@ const Users = () => {
         searchStuff={{ search, setSearch }}
         filterBySearch={filterBySearch}
         clearSearch={clearSearch}
+        tableStuff={{ tableActive, setTableActive }}
+        cardStuff={{ cardActive, setCardActive }}
       />
     </div>
   );
