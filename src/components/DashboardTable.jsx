@@ -86,7 +86,7 @@ function DashboardTable({
     </div>
   );
 
-  const showCards = usersList.map((item) => (
+  const showCards = usersList?.map((item) => (
     <Card
       image={item.userAvatar.url ? item.userAvatar.url : avatarFake}
       name={item.name}
@@ -99,8 +99,8 @@ function DashboardTable({
   return (
     <div className="m-4">
       <div className="flex flex-col sm:flex-row  justify-between items-start sm:items-center mb-2">
-        <div>
-          <h1 className="text-2xl font-medium">{pageHeader}</h1>
+        <div className="flex justify-between items-center  w-full mb-2 sm:mb-0">
+          <h1 className="text-2xl font-medium">{pageHeader}</h1> 
           <div className="flex items-center justify-center gap-1">
             <span
               className={`${
