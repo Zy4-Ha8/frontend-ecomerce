@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import DashboardForm from "../../../components/DashboardForm";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser } from "../../../features/users/usersSlice";
@@ -17,11 +17,14 @@ function AddUser() {
   const errorMessage = users?.error?.message;
   console.log(users);
   const dispatch = useDispatch();
+  const firstInput = useRef(null);
+  const [successStatus, setSuccessStatus] = useState(false);
   const inputsContent = [
     {
       name: "name",
       type: "text",
       placeholder: "add the name of the user",
+      ref: firstInput,
     },
     {
       name: "username",
@@ -35,20 +38,21 @@ function AddUser() {
     },
     {
       name: "role",
-      type: "text",
-      placeholder: "add the role of the user",
-    },
-    {
-      name: "avatar",
-      type: "file",
-      placeholder: "add the image of the user",
+      type: "options",
+      options: ["customer", "admin", "manager"],
     },
     {
       name: "password",
       type: "password",
       placeholder: "add your password",
     },
+    {
+      name: "avatar",
+      type: "file",
+      placeholder: "add the image of the user",
+    },
   ];
+
   const handleInputChange = (e) => {
     setFormdata({ ...formdata, [e.target.name]: e.target.value });
   };
@@ -63,22 +67,47 @@ function AddUser() {
   const imageRemove = () => {
     setImagePreview(null);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createUser(formdata));
+    try {
+      const result = await dispatch(createUser(formdata)).unwrap();
+      if (result) {
+        setFormdata({
+          name: "",
+          username: "",
+          email: "",
+          role: "",
+          userAvatar: {},
+          password: "",
+        });
+        setImagePreview(null);
+        firstInput.current.focus();
+        setSuccessStatus(true);
+        setTimeout(() => {
+          setSuccessStatus(false);
+        }, 5000);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  console.log(formdata);
   return (
     <div>
       <DashboardForm
         headerText={"add new user"}
         inputsCotent={inputsContent}
         handleInputChange={handleInputChange}
+        formdata={formdata}
         handleImageChange={handleImageChange}
         imagePreview={imagePreview}
         imageRemove={imageRemove}
         submitButton={"Add New User"}
         handleSubmit={handleSubmit}
         errorMessage={errorMessage}
+        successStatusStuff={{ successStatus, setSuccessStatus }}
+        loadingState={users.loading}
       />
     </div>
   );

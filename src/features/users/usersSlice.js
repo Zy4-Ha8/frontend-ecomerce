@@ -35,7 +35,7 @@ export const getUserById = createAsyncThunk(
     const accessToken = cookie.get("access_token");
 
     try {
-      const response = await axios.get(`${API_URL}/${userId}`, {
+      const response = await axios.get(`${API_URL}/${+userId}`, {
         headers: { Authorization: "Bearer " + accessToken },
       });
       return response.data;
