@@ -15,7 +15,9 @@ function DashboardForm({
   errorMessage,
   successStatusStuff,
   loadingState,
+  blank_Image,
 }) {
+  console.log(errorMessage);
   const inputsMap = inputsCotent.map((input, index) => {
     return input.type === "file" ? (
       <>
@@ -24,10 +26,18 @@ function DashboardForm({
             htmlFor={input.name}
             className="flex flex-col items-center justify-center w-50 h-40 border-2 border-dashed border-[#3a5b22] rounded-xl cursor-pointer bg-[#3a5b220a] hover:bg-[#3a5b2215] transition-colors"
           >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            <div
+              className={`flex flex-col items-center justify-center pt-5 pb-6 ${
+                handleImageChange ? "" : "cursor-no-drop"
+              }`}
+            >
               <Upload className="w-10 h-10 mb-3 text-[#3a5b22]" />
               <p className="mb-2 text-sm text-gray-700">
-                <span className="font-semibold">Click to upload</span>
+                <span className={`font-semibold  `}>
+                  {handleImageChange
+                    ? "Click to upload"
+                    : "Not support  for this section"}
+                </span>
               </p>
             </div>
           </label>
@@ -37,13 +47,13 @@ function DashboardForm({
             className="hidden"
             type={input.type}
             name={input.name}
-            onChange={handleImageChange}
+            onChange={handleImageChange && handleImageChange}
           />
 
           <div className="h-40 w-50 rounded-xl">
             <img
               className="w-full h-full rounded-xl object-cover"
-              src={imagePreview ? imagePreview : avatarFake}
+              src={imagePreview ? imagePreview : blank_Image}
               alt=""
             />
           </div>
@@ -61,11 +71,13 @@ function DashboardForm({
           onChange={handleInputChange}
           className="block w-full rounded-md mb-2 bg-[#3a5b220a] border-gray-300 shadow-sm px-4 py-2 focus:border-[#3a5b22] focus:ring-[#3a5b22] sm:text-sm"
         >
-          <option>select user role</option>
-          {input.options.map((option) => (
-            <option className="contain-style" value={option}>
-              {option}
-            </option>
+          {input.options.map((option, index) => (
+            <>
+              {" "}
+              <option className="contain-style" value={option.value}>
+                {option.text}
+              </option>
+            </>
           ))}
         </select>
       </>
@@ -92,16 +104,18 @@ function DashboardForm({
   const successMessage = (
     <div
       className={`fixed z-50 top-18 ease-in-out ${
-        successStatusStuff.successStatus ? "right-5 " : "-right-80 pointer-events-none"
+        successStatusStuff.successStatus
+          ? "right-5 "
+          : "-right-80 pointer-events-none"
       } transition-all duration-700 `}
     >
       <p className="px-2 py-2 bg-[#3a5b22] rounded-xl text-white flex  items-center gap-3 justify-between">
         <span>The Item has been add successfully</span>
         <span
-          className="bg-red-600 rounded-md"
+          className="bg-white rounded-md"
           onClick={() => successStatusStuff.setSuccessStatus(false)}
         >
-          <X />
+          <X color="#3a5b22"/>
         </span>
       </p>
     </div>
@@ -120,7 +134,7 @@ function DashboardForm({
           <form onSubmit={handleSubmit}>
             {inputsMap}
 
-            {typeof errorMessage === Array && (
+            {Array.isArray(errorMessage) && (
               <div>
                 <div className="bg-white p-6 rounded-lg  mt-5">
                   {errorMessage?.length > 0 && (

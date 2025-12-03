@@ -14,13 +14,16 @@ import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Card from "./Card";
+import TableSkeleton from "../helper/loading/TableSkeleton";
+import CardSkeleton from "../helper/loading/CardSkeleton";
+import PaginationSkeleton from "../helper/loading/PaginationSkeleton";
 
 function DashboardTable({
   pageHeader,
   tableHeaders,
-  usersLoading,
-  usersList,
-  usersError,
+  Loading,
+  List,
+  Error,
   currentPage,
   totalPages,
   onPageChange,
@@ -37,7 +40,7 @@ function DashboardTable({
       {header}
     </th>
   ));
-  const showTableBody = usersList?.map((user, index) => (
+  const showTableBody = List?.map((user, index) => (
     <tr className="odd:bg-neutral-primary even:bg-[#3a5b2216] border-b border-default">
       {tableHeaders?.map((header) => (
         <td className="px-6 py-4">
@@ -54,7 +57,7 @@ function DashboardTable({
       ))}
       <td>
         <div className="flex items-center justify-center gap-2">
-          <Link to={`/dashboard/update-user/${user.id}`}>
+          <Link to={`/dashboard/update-user/${user.username}`}>
             <div className="cursor-pointer ">
               <Settings color="#3a5b22" />
             </div>
@@ -86,7 +89,7 @@ function DashboardTable({
     </div>
   );
 
-  const showCards = usersList?.map((item) => (
+  const showCards = List?.map((item) => (
     <Card
       image={item.userAvatar.url ? item.userAvatar.url : avatarFake}
       name={item.name}
@@ -100,7 +103,7 @@ function DashboardTable({
     <div className="m-4">
       <div className="flex flex-col sm:flex-row  justify-between items-start sm:items-center mb-2">
         <div className="flex justify-between items-center  w-full mb-2 sm:mb-0">
-          <h1 className="text-2xl font-medium">{pageHeader}</h1> 
+          <h1 className="text-2xl font-medium">{pageHeader}</h1>
           <div className="flex items-center justify-center gap-1">
             <span
               className={`${
@@ -163,31 +166,54 @@ function DashboardTable({
       </div>
 
       {/* table */}
-      {tableStuff.tableActive && table}
-      {cardStuff.cardActive && (
-        <div className="flex flex-wrap items-center justify-center gap-4 h-[564.8px] overflow-y-auto p-2">
-          {showCards}
+      {tableStuff.tableActive &&
+        (Loading ? <TableSkeleton rows={10} /> : List?.length && table)}
+      {cardStuff.cardActive &&
+        (Loading ? (
+          <CardSkeleton />
+        ) : (
+          List?.length && (
+            <div className="flex flex-wrap items-center justify-center gap-4 h-[564.8px] overflow-y-auto p-2">
+              {showCards}
+            </div>
+          )
+        ))}
+      {Error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">
+            {typeof Error === "string"
+              ? Error + " please contact the system adminstation"
+              : "Something went wrong while loading users please contact the system adminstation."}
+          </span>
         </div>
       )}
       {/* Pagination */}
       <div>
-        {totalPages > 0 && (
-          <ReactPaginate
-            breakLabel="..."
-            nextLabel=<ArrowRight className="cursor-pointer" color="#3a5b22" />
-            onPageChange={onPageChange}
-            pageRangeDisplayed={5}
-            pageCount={totalPages}
-            previousLabel=<ArrowLeft
-              className="cursor-pointer"
-              color="#3a5b22"
+        {Loading ? (
+          <PaginationSkeleton count={5} />
+        ) : (
+          totalPages > 0 && (
+            <ReactPaginate
+              breakLabel="..."
+              nextLabel=<ArrowRight
+                className="cursor-pointer"
+                color="#3a5b22"
+              />
+              onPageChange={onPageChange}
+              pageRangeDisplayed={5}
+              pageCount={totalPages}
+              previousLabel=<ArrowLeft
+                className="cursor-pointer"
+                color="#3a5b22"
+              />
+              forcePage={currentPage - 1}
+              containerClassName="pagination flex gap-2 justify-center p-4 "
+              pageClassName="rounded-full  border"
+              pageLinkClassName="page-link cursor-pointer px-3 py-2 rounded-full"
+              activeClassName="bg-[#3a5b22] rounded-full text-white"
             />
-            forcePage={currentPage - 1}
-            containerClassName="pagination flex gap-2 justify-center p-4 "
-            pageClassName="rounded-full  border"
-            pageLinkClassName="page-link cursor-pointer px-3 py-2 rounded-full"
-            activeClassName="bg-[#3a5b22] rounded-full text-white"
-          />
+          )
         )}
       </div>
     </div>

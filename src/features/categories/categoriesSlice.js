@@ -1,15 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { api_url, usersEndPoint } from "../../assets/api/apiEndPoint";
+import { api_url, categoriesEndPoint } from "../../assets/api/apiEndPoint";
 import Cookies from "universal-cookie";
 
 // API base URL - adjust this to your backend URL
-const API_URL = `${api_url}/${usersEndPoint}`;
+const API_URL = `${api_url}/${categoriesEndPoint}`;
 const cookie = new Cookies();
-
+// * Public route
 // Get all users
-export const getAllUsers = createAsyncThunk(
-  "users/getAllUsers",
+export const getAllCategories = createAsyncThunk(
+  "categories/getAllcategories",
   async ({ limit, page, search }, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
     try {
@@ -22,45 +22,48 @@ export const getAllUsers = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch users"
+        error.response?.data?.message || "Failed to fetch categories"
       );
     }
   }
 );
-
+// * public route
 // Get single user by ID
-export const getUserById = createAsyncThunk(
-  "users/getUserById",
-  async (username, { rejectWithValue }) => {
+export const getCategoryById = createAsyncThunk(
+  "categories/getCategoryById",
+  async (id, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
     try {
-      const response = await axios.get(`${API_URL}/${username}`, {
+      const response = await axios.get(`${API_URL}/findById/${id}`, {
         headers: { Authorization: "Bearer " + accessToken },
       });
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch user"
+        error.response?.data?.message || "Failed to fetch category"
       );
     }
   }
 );
-
+// ! not public route
 // Create new user (POST) - FIXED FOR FILE UPLOAD
-export const createUser = createAsyncThunk(
-  "users/createUser",
-  async (userData, { rejectWithValue }) => {
+export const createCategory = createAsyncThunk(
+  "categories/createCategory",
+  async (categoryData, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
     try {
       const formData = new FormData();
 
-      Object.keys(userData).forEach((key) => {
-        if (key === "userAvatar" && userData[key] instanceof File) {
-          formData.append("file", userData[key]);
-        } else if (userData[key] !== null && userData[key] !== undefined) {
-          formData.append(key, userData[key]);
+      Object.keys(categoryData).forEach((key) => {
+        if (key === "image_url" && categoryData[key] instanceof File) {
+          formData.append("file", categoryData[key]);
+        } else if (
+          categoryData[key] !== null &&
+          categoryData[key] !== undefined
+        ) {
+          formData.append(key, categoryData[key]);
         }
       });
 
@@ -73,21 +76,21 @@ export const createUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to create user"
+        error.response?.data?.message || "Failed to create category"
       );
     }
   }
 );
-
+// ! not public route
 // Update user (PUT) - FIXED FOR FILE UPLOAD
-export const updateUser = createAsyncThunk(
-  "users/updateUser",
-  async ({ userId, userData }, { rejectWithValue }) => {
+export const updateCategory = createAsyncThunk(
+  "categories/updateCategory",
+  async ({ categoryId, updateCategory }, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
     try {
       // Check if userData contains a file
-      const hasFile = userData.userAvatar instanceof File;
+      const hasFile = updateCategory.image_url instanceof File;
 
       let requestData;
       let headers = {
@@ -97,8 +100,8 @@ export const updateUser = createAsyncThunk(
       if (hasFile) {
         // Create FormData if file is present
         const formData = new FormData();
-        Object.keys(userData).forEach((key) => {
-          if (key === "userAvatar" && userData[key] instanceof File) {
+        Object.keys(updateCategory).forEach((key) => {
+          if (key === "image_url" && userData[key] instanceof File) {
             formData.append("file", userData[key]);
           } else if (userData[key] !== null && userData[key] !== undefined) {
             formData.append(key, userData[key]);
@@ -108,35 +111,39 @@ export const updateUser = createAsyncThunk(
         headers["Content-Type"] = "multipart/form-data";
       } else {
         // Send as JSON if no file
-        requestData = userData;
+        requestData = updateCategory;
       }
 
-      const response = await axios.put(`${API_URL}/${userId}`, requestData, {
-        headers,
-      });
+      const response = await axios.put(
+        `${API_URL}/${categoryId}`,
+        requestData,
+        {
+          headers,
+        }
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to update user"
+        error.response?.data?.message || "Failed to update category"
       );
     }
   }
 );
-
+// ! not public route
 // Delete user
-export const deleteUser = createAsyncThunk(
-  "users/deleteUser",
-  async (userId, { rejectWithValue }) => {
+export const deleteCategory = createAsyncThunk(
+  "categories/deleteCategory",
+  async (categoryId, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
     try {
-      await axios.delete(`${API_URL}/${userId}`, {
+      await axios.delete(`${API_URL}/${categoryId}`, {
         headers: { Authorization: "Bearer " + accessToken },
       });
-      return userId;
+      return categoryId;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to delete user"
+        error.response?.data?.message || "Failed to delete category"
       );
     }
   }
@@ -144,133 +151,114 @@ export const deleteUser = createAsyncThunk(
 
 // Initial state
 const initialState = {
-  users: [],
-  currentUser: null,
+  categories: [],
+  currentCategory: null,
   loading: false,
   error: null,
   success: false,
 };
 
 // Create slice
-const userSlice = createSlice({
-  name: "users",
+const categoriesSlice = createSlice({
+  name: "categories",
   initialState,
-  reducers: {
-    // Clear error
-    clearError: (state) => {
-      state.error = null;
-    },
-    // Clear success
-    clearSuccess: (state) => {
-      state.success = false;
-    },
-    // Clear current user
-    clearCurrentUser: (state) => {
-      state.currentUser = null;
-    },
-    // Reset state
-    resetUserState: (state) => {
-      state.users = [];
-      state.currentUser = null;
-      state.loading = false;
-      state.error = null;
-      state.success = false;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      // *Get All Users
-      .addCase(getAllUsers.pending, (state) => {
+      // *Get All Categories
+      .addCase(getAllCategories.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getAllUsers.fulfilled, (state, action) => {
+      .addCase(getAllCategories.fulfilled, (state, action) => {
         state.loading = false;
         state.users = action.payload;
         state.error = null;
       })
-      .addCase(getAllUsers.rejected, (state, action) => {
+      .addCase(getAllCategories.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       //* Get Single User
-      .addCase(getUserById.pending, (state) => {
+      .addCase(getCategoryById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getUserById.fulfilled, (state, action) => {
+      .addCase(getCategoryById.fulfilled, (state, action) => {
         state.loading = false;
         state.currentUser = action.payload;
         state.error = null;
       })
-      .addCase(getUserById.rejected, (state, action) => {
+      .addCase(getCategoryById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       //* Create User
-      .addCase(createUser.pending, (state) => {
+      .addCase(createCategory.pending, (state) => {
         state.loading = true;
         state.error = null;
         state.success = false;
       })
-      .addCase(createUser.fulfilled, (state, action) => {
+      .addCase(createCategory.fulfilled, (state, action) => {
         state.loading = false;
-        state.users.push(action.payload.user);
+        if (state.users) {
+          state.users.push(action.payload.data);
+        }
         state.success = true;
         state.error = null;
       })
-      .addCase(createUser.rejected, (state, action) => {
+      .addCase(createCategory.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;
       })
 
       //* Update User
-      .addCase(updateUser.pending, (state) => {
+      .addCase(updateCategory.pending, (state) => {
         state.loading = true;
         state.error = null;
         state.success = false;
       })
-      .addCase(updateUser.fulfilled, (state, action) => {
+      .addCase(updateCategory.fulfilled, (state, action) => {
         state.loading = false;
-        if (state.users.data) {
-          const index = state.users.data.findIndex(
-            (user) => user.id === action.payload.id
+        if (state.categories.data) {
+          const index = state.categories.data.findIndex(
+            (category) => category.id === action.payload.id
           );
           if (index !== -1) {
-            state.users.data[index] = action.payload;
+            state.categories.data[index] = action.payload;
           }
-          if (state.currentUser?.id === action.payload.id) {
-            state.currentUser = action.payload;
+          if (state.currentCategory?.id === action.payload.id) {
+            state.currentCategory = action.payload;
           }
         }
         state.success = true;
         state.error = null;
       })
-      .addCase(updateUser.rejected, (state, action) => {
+      .addCase(updateCategory.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;
       })
 
       //* Delete User
-      .addCase(deleteUser.pending, (state) => {
+      .addCase(deleteCategory.pending, (state) => {
         state.loading = true;
         state.error = null;
         state.success = false;
       })
-      .addCase(deleteUser.fulfilled, (state, action) => {
+      .addCase(deleteCategory.fulfilled, (state, action) => {
         state.loading = false;
-        state.users.data = state.users.data.filter(
-          (user) => user.id !== action.payload
+        state.categories.data = state.categories.data.filter(
+          (category) => category.id !== action.payload
         );
 
         state.success = true;
         state.error = null;
       })
-      .addCase(deleteUser.rejected, (state, action) => {
+      .addCase(deleteCategory.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;
@@ -278,7 +266,4 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, clearSuccess, clearCurrentUser, resetUserState } =
-  userSlice.actions;
-
-export default userSlice.reducer;
+export default categoriesSlice.reducer;

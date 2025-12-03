@@ -1,21 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import DashboardForm from "../../../components/DashboardForm";
 import { useDispatch, useSelector } from "react-redux";
-import { createUser, getUserById } from "../../../features/users/usersSlice";
-import { useParams } from "react-router-dom";
+import { getUserById, updateUser } from "../../../features/users/usersSlice";
+import { useNavigate, useParams } from "react-router-dom";
 
 function UpdateUser() {
-  const { id } = useParams("id");
+  const { username } = useParams();
+
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchUser = async () => {
-      if (id) {
-        await dispatch(getUserById(id)).unwrap();
-        console.log(users);
+      if (username) {
+        await dispatch(getUserById(username))
+          .unwrap()
+          .then((data) => {
+            setFormdata(data);
+            setImagePreview(data.userAvatar.url);
+          });
       }
     };
-    fetchUser()
+    fetchUser();
   }, []);
   const [formdata, setFormdata] = useState({
     name: "",
@@ -23,11 +28,10 @@ function UpdateUser() {
     email: "",
     role: "",
     userAvatar: {},
-    password: "",
   });
   const [imagePreview, setImagePreview] = useState(null);
   const errorMessage = users?.error?.message;
-  console.log(users);
+  console.log(errorMessage)
   const firstInput = useRef(null);
   const [successStatus, setSuccessStatus] = useState(false);
   const inputsContent = [
@@ -53,36 +57,51 @@ function UpdateUser() {
       options: ["customer", "admin", "manager"],
     },
     {
-      name: "password",
-      type: "password",
-      placeholder: "add your password",
-    },
-    {
       name: "avatar",
       type: "file",
       placeholder: "add the image of the user",
     },
   ];
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormdata({ ...formdata, [e.target.name]: e.target.value });
   };
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-      setFormdata({ ...formdata, userAvatar: file });
-    }
-  };
-  console.log(formdata);
-  const imageRemove = () => {
-    setImagePreview(null);
-  };
+  // TODO backend api not complete for this
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setImagePreview(URL.createObjectURL(file));
+  //     setFormdata({ ...formdata, userAvatar: file });
+  //   }
+  // };
+  // TODO backend api not complete for this
+  // const imageRemove = () => {
+  //   setImagePreview(null);
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await dispatch(createUser(formdata)).unwrap();
+      const updateData = {};
+
+      if (formdata.name !== users.currentUser.name) {
+        updateData.name = formdata.name;
+      }
+      if (formdata.username !== users.currentUser.username) {
+        updateData.username = formdata.username;
+      }
+      if (formdata.email !== users.currentUser.email) {
+        updateData.email = formdata.email;
+      }
+      if (formdata.role !== users.currentUser.role) {
+        updateData.role = formdata.role;
+      }
+
+      const result = await dispatch(
+        updateUser({ userId: users.currentUser.id, userData: updateData })
+      ).unwrap();
       if (result) {
+        navigate("/dashboard/show-users");
         setFormdata({
           name: "",
           username: "",
@@ -92,29 +111,26 @@ function UpdateUser() {
           password: "",
         });
         setImagePreview(null);
-        firstInput.current.focus();
-        setSuccessStatus(true);
-        setTimeout(() => {
-          setSuccessStatus(false);
-        }, 5000);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err)
+      // navigate("/dashboard/show-users");
     }
   };
 
-  console.log(formdata);
   return (
     <div>
       <DashboardForm
-        headerText={"add new user"}
+        headerText={"update the user"}
+        
         inputsCotent={inputsContent}
         handleInputChange={handleInputChange}
         formdata={formdata}
-        handleImageChange={handleImageChange}
         imagePreview={imagePreview}
-        imageRemove={imageRemove}
-        submitButton={"Add New User"}
+        // TODO backend api not complete for this
+        // handleImageChange={handleImageChange}
+        // imageRemove={imageRemove}
+        submitButton={"Update The User"}
         handleSubmit={handleSubmit}
         errorMessage={errorMessage}
         successStatusStuff={{ successStatus, setSuccessStatus }}

@@ -59,9 +59,9 @@ const Users = () => {
       <DashboardTable
         pageHeader={"Users"}
         tableHeaders={tableHeaders}
-        usersLoading={usersLoading}
-        usersList={userState?.users.data}
-        usersError={usersError}
+        Loading={usersLoading}
+        List={userState?.users.data}
+        Error={usersError?.message}
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageClick}

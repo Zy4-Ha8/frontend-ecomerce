@@ -27,10 +27,10 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="add-user" element={<AddUser />} />
             <Route path="show-users" element={<Users />} />
-            <Route path="update-user/:id" element={<UpdateUser />} />
+            <Route path="update-user/:username" element={<UpdateUser />} />
 
             <Route path="add-category" element={<AddCategory />} />
-            <Route path="show-catgeories" element={<Categories />} />
+            <Route path="show-categories" element={<Categories />} />
 
             <Route path="add-product" element={<AddProduct />} />
             <Route path="show-products" element={<Products />} />

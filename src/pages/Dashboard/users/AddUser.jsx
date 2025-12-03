@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import DashboardForm from "../../../components/DashboardForm";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser } from "../../../features/users/usersSlice";
-
+import avatarFake from "../../../assets/images/avatarFake.png";
 function AddUser() {
   const [formdata, setFormdata] = useState({
     name: "",
@@ -39,7 +39,12 @@ function AddUser() {
     {
       name: "role",
       type: "options",
-      options: ["customer", "admin", "manager"],
+      options: [
+        { text: "select the role of the user", value: "" },
+        { text: "customer", value: "customer" },
+        { text: "admin", value: "admin" },
+        { text: "manager", value: "manager" },
+      ],
     },
     {
       name: "password",
@@ -107,6 +112,7 @@ function AddUser() {
         handleSubmit={handleSubmit}
         errorMessage={errorMessage}
         successStatusStuff={{ successStatus, setSuccessStatus }}
+        blank_Image={avatarFake}
         loadingState={users.loading}
       />
     </div>
