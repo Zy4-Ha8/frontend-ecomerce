@@ -147,6 +147,7 @@ const initialState = {
   users: [],
   currentUser: null,
   loading: false,
+  updateLoading: false,
   error: null,
   success: false,
 };
@@ -229,12 +230,12 @@ const userSlice = createSlice({
 
       //* Update User
       .addCase(updateUser.pending, (state) => {
-        state.loading = true;
+        state.updateLoading = true;
         state.error = null;
         state.success = false;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.loading = false;
+        state.updateLoading = false;
         if (state.users.data) {
           const index = state.users.data.findIndex(
             (user) => user.id === action.payload.id
@@ -250,7 +251,7 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(updateUser.rejected, (state, action) => {
-        state.loading = false;
+        state.updateLoading = false;
         state.error = action.payload;
         state.success = false;
       })

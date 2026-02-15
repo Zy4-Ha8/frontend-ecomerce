@@ -3,12 +3,12 @@ import DashboardForm from "../../../components/DashboardForm";
 import { useDispatch, useSelector } from "react-redux";
 import blank_Image from "../../../assets/images/blankImage.jpg";
 import { createCategory } from "../../../features/categories/categoriesSlice";
-function AddUser() {
+function AddCategory() {
   const [formdata, setFormdata] = useState({
     name: "",
     description: "",
     image_url: {},
-    is_active: null,
+    // is_active: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
   const categories = useSelector((state) => state.categories);
@@ -30,15 +30,15 @@ function AddUser() {
       placeholder: "add the description",
     },
 
-    {
-      name: "is_active",
-      type: "options",
-      options: [
-        { text: "select the state of the category", value: "" },
-        { text: "active", value: true },
-        { text: "inactive", value: false },
-      ],
-    },
+    // {
+    //   name: "is_active",
+    //   type: "options",
+    //   options: [
+    //     { text: "select the state of the category", value: "" },
+    //     { text: "active", value: true },
+    //     { text: "inactive", value: false },
+    //   ],
+    // },
 
     {
       name: "category image",
@@ -71,7 +71,7 @@ function AddUser() {
           name: "",
           description: "",
           image_url: {},
-          is_active: null,
+         
         });
         setImagePreview(null);
         firstInput.current.focus();
@@ -107,4 +107,4 @@ function AddUser() {
   );
 }
 
-export default AddUser;
+export default AddCategory;

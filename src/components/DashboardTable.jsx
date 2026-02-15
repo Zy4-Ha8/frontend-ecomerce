@@ -17,7 +17,7 @@ import Card from "./Card";
 import TableSkeleton from "../helper/loading/TableSkeleton";
 import CardSkeleton from "../helper/loading/CardSkeleton";
 import PaginationSkeleton from "../helper/loading/PaginationSkeleton";
-
+import blankImage from "../assets/images/blankImage.jpg";
 function DashboardTable({
   pageHeader,
   tableHeaders,
@@ -27,37 +27,49 @@ function DashboardTable({
   currentPage,
   totalPages,
   onPageChange,
-  deleteUser,
+  deleteItem,
   searchStuff,
   filterBySearch,
   clearSearch,
   tableStuff,
   cardStuff,
+  updatedRoute,
 }) {
+  console.log(totalPages);
   const globalWidth = useSelector((state) => state.pageWidth);
   const showHeader = tableHeaders.map((header) => (
     <th scope="col" className="px-6 py-3 font-medium bg-[#3a5b2216]">
       {header}
     </th>
   ));
-  const showTableBody = List?.map((user, index) => (
+  const showTableBody = List?.map((item, index) => (
     <tr className="odd:bg-neutral-primary even:bg-[#3a5b2216] border-b border-default">
       {tableHeaders?.map((header) => (
-        <td className="px-6 py-4">
-          {typeof user[header] === "object" ? (
-            <div className="w-8 h-8">
-              <img src={user[header].url} alt="" />
+        <td className="px-6 py-4 text-center">
+          {typeof item[header] === "object" ? (
+            <div className="w-full h-8 flex items-center justify-center ">
+              <img width={50} src={item[header].url || blankImage} alt="" />
             </div>
+          ) : typeof item[header] === "boolean" ? (
+            item[header] === true ? (
+              "Active"
+            ) : (
+              "Not active"
+            )
           ) : header === "id" ? (
             index + 1
           ) : (
-            user[header]
+            item[header]
           )}
         </td>
       ))}
       <td>
         <div className="flex items-center justify-center gap-2">
-          <Link to={`/dashboard/update-user/${user.username}`}>
+          <Link
+            to={`/dashboard/${updatedRoute}/${
+              updatedRoute === "update-user" ? item.username : item.id
+            }`}
+          >
             <div className="cursor-pointer ">
               <Settings color="#3a5b22" />
             </div>
@@ -65,7 +77,7 @@ function DashboardTable({
 
           <div
             className="cursor-pointer bg-red-500 rounded-md"
-            onClick={() => deleteUser(user.id)}
+            onClick={() => deleteItem(item.id)}
           >
             <X color="white" />
           </div>
@@ -89,15 +101,22 @@ function DashboardTable({
     </div>
   );
 
-  const showCards = List?.map((item) => (
-    <Card
-      image={item.userAvatar.url ? item.userAvatar.url : avatarFake}
-      name={item.name}
-      details={item.email}
-      onDelete={deleteUser}
-      id={item.id}
-    />
-  ));
+  const showCards = List?.map((item) => {
+    const imageUrl = tableHeaders.filter(
+      (header) => typeof item[header] === "object"
+    );
+    console.log(item[imageUrl[0]].url);
+
+    return (
+      <Card
+        image={item[imageUrl[0]].url ? item[imageUrl[0]].url : avatarFake}
+        name={item.name}
+        details={item.email}
+        onDelete={deleteItem}
+        id={item.id}
+      />
+    );
+  });
 
   return (
     <div className="m-4">
@@ -144,7 +163,7 @@ function DashboardTable({
         >
           <input
             type="text"
-            placeholder="Search For User"
+            placeholder="Search For item"
             value={searchStuff.search}
             onChange={(e) => searchStuff.setSearch(e.target.value)}
             className="border-none outline-none "
@@ -167,7 +186,7 @@ function DashboardTable({
 
       {/* table */}
       {tableStuff.tableActive &&
-        (Loading ? <TableSkeleton rows={10} /> : List?.length && table)}
+        (Loading ? <TableSkeleton rows={3} /> : List?.length && table)}
       {cardStuff.cardActive &&
         (Loading ? (
           <CardSkeleton />
@@ -184,14 +203,14 @@ function DashboardTable({
           <span className="block sm:inline">
             {typeof Error === "string"
               ? Error + " please contact the system adminstation"
-              : "Something went wrong while loading users please contact the system adminstation."}
+              : "Something went wrong while loading data please contact the system adminstation."}
           </span>
         </div>
       )}
       {/* Pagination */}
       <div>
         {Loading ? (
-          <PaginationSkeleton count={5} />
+          <PaginationSkeleton count={2} />
         ) : (
           totalPages > 0 && (
             <ReactPaginate

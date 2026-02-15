@@ -1,5 +1,7 @@
 import { Upload, X } from "lucide-react";
 import React from "react";
+import Select from "react-select";
+
 import avatarFake from "../assets/images/avatarFake.png";
 import LoadingSpinner from "./LoadingSpinner";
 function DashboardForm({
@@ -15,6 +17,7 @@ function DashboardForm({
   errorMessage,
   successStatusStuff,
   loadingState,
+  updateLoading,
   blank_Image,
 }) {
   console.log(errorMessage);
@@ -81,6 +84,22 @@ function DashboardForm({
           ))}
         </select>
       </>
+    ) : input.type === "multiSelect" ? (
+      <>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          1. Available Colors (Multi-Select)
+        </label>
+        <Select
+          isMulti
+          options={input.options}
+          value={input.state}
+          onChange={input.setState}
+          placeholder="Select colors..."
+          closeMenuOnSelect={false}
+          // styles={customStyles}
+          className="text-sm mb-2"
+        />
+      </>
     ) : (
       <>
         <label className="capitalize font-semibold" htmlFor={input.name}>
@@ -115,7 +134,7 @@ function DashboardForm({
           className="bg-white rounded-md"
           onClick={() => successStatusStuff.setSuccessStatus(false)}
         >
-          <X color="#3a5b22"/>
+          <X color="#3a5b22" />
         </span>
       </p>
     </div>
@@ -171,8 +190,13 @@ function DashboardForm({
               </div>
             )}
 
-            <button className="bg-[#3a5b22] w-full hover:bg-[#3a5b22d7] cursor-pointer py-2 px-4 rounded-xl  text-white my-3">
+            <button className="bg-[#3a5b22] w-full hover:bg-[#3a5b22d7] cursor-pointer py-2 px-4 rounded-xl  text-white my-3 flex justify-center items-center gap-5">
               {submitButton}
+              {updateLoading ? (
+                <div className=" animate-spin rounded-full h-5 w-5 border-4 border-transparent border-t-white border-r-white"></div>
+              ) : (
+                <div className="opacity-0 animate-spin rounded-full h-5 w-5 border-4 border-transparent border-t-white border-r-white"></div>
+              )}
             </button>
           </form>
         </div>

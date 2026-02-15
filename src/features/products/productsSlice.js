@@ -1,15 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { api_url, categoriesEndPoint } from "../../assets/api/apiEndPoint";
+import {
+  api_url,
+  categoriesEndPoint,
+  productsEndPoint,
+} from "../../assets/api/apiEndPoint";
 import Cookies from "universal-cookie";
 
 // API base URL - adjust this to your backend URL
-const API_URL = `${api_url}/${categoriesEndPoint}`;
+const API_URL = `${api_url}/${productsEndPoint}`;
 const cookie = new Cookies();
+
 // * Public route
-// Get all categories
-export const getAllCategories = createAsyncThunk(
-  "categories/getAllcategories",
+// Get all products
+export const getAllProducts = createAsyncThunk(
+  "products/getAllProducts",
   async ({ limit, page, search }, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
     try {
@@ -22,15 +27,16 @@ export const getAllCategories = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch categories"
+        error.response?.data?.message || "Failed to fetch products"
       );
     }
   }
 );
+
 // * public route
-// Get single user by ID
-export const getCategoryById = createAsyncThunk(
-  "categories/getCategoryById",
+// Get single product by ID
+export const getProductById = createAsyncThunk(
+  "products/getProductById",
   async (id, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
@@ -41,29 +47,32 @@ export const getCategoryById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch category"
+        error.response?.data?.message || "Failed to fetch product"
       );
     }
   }
 );
+
 // ! not public route
 // Create new user (POST) - FIXED FOR FILE UPLOAD
-export const createCategory = createAsyncThunk(
-  "categories/createCategory",
-  async (categoryData, { rejectWithValue }) => {
+export const createProduct = createAsyncThunk(
+  "products/createProduct",
+  async (productData, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
     try {
       const formData = new FormData();
 
-      Object.keys(categoryData).forEach((key) => {
-        if (key === "image_url" && categoryData[key] instanceof File) {
-          formData.append("file", categoryData[key]);
+      Object.keys(productData).forEach((key) => {
+        if (key === "thumbnail" && productData[key] instanceof File) {
+          formData.append("file", productData[key]);
+        } else if (key === "images") {
+          formData.append("files", productData[key]);
         } else if (
-          categoryData[key] !== null &&
-          categoryData[key] !== undefined
+          productData[key] !== null &&
+          productData[key] !== undefined
         ) {
-          formData.append(key, categoryData[key]);
+          formData.append(key, productData[key]);
         }
       });
 
@@ -81,16 +90,17 @@ export const createCategory = createAsyncThunk(
     }
   }
 );
+
 // ! not public route
-// Update user (PUT) - FIXED FOR FILE UPLOAD
-export const updateCategory = createAsyncThunk(
-  "categories/updateCategory",
-  async ({ categoryId, updateCategory }, { rejectWithValue }) => {
+// Update product (PUT)
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async ({ productId, updateProduct }, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
     try {
-      // Check if userData contains a file
-      const hasFile = updateCategory.image_url instanceof File;
+      // Check if productData contains a file
+      const hasFile = updateProduct.thumbnail instanceof File;
 
       let requestData;
       let headers = {
@@ -100,53 +110,49 @@ export const updateCategory = createAsyncThunk(
       if (hasFile) {
         // Create FormData if file is present
         const formData = new FormData();
-        Object.keys(updateCategory).forEach((key) => {
-          if (key === "image_url" && updateCategory[key] instanceof File) {
-            formData.append("file", updateCategory[key]);
+        Object.keys(updateProduct).forEach((key) => {
+          if (key === "thumbnail" && updateProduct[key] instanceof File) {
+            formData.append("file", updateProduct[key]);
           } else if (
-            updateCategory[key] !== null &&
-            updateCategory[key] !== undefined
+            updateProduct[key] !== null &&
+            updateProduct[key] !== undefined
           ) {
-            formData.append(key, updateCategory[key]);
+            formData.append(key, updateProduct[key]);
           }
         });
         requestData = formData;
         headers["Content-Type"] = "multipart/form-data";
       } else {
         // Send as JSON if no file
-        requestData = updateCategory;
+        requestData = updateProduct;
       }
 
-      const response = await axios.put(
-        `${API_URL}/${categoryId}`,
-        requestData,
-        {
-          headers,
-        }
-      );
+      const response = await axios.put(`${API_URL}/${productId}`, requestData, {
+        headers,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to update category"
+        error.response?.data?.message || "Failed to update product"
       );
     }
   }
 );
 // ! not public route
-// Delete user
-export const deleteCategory = createAsyncThunk(
-  "categories/deleteCategory",
-  async (categoryId, { rejectWithValue }) => {
+// Delete product
+export const deleteProduct = createAsyncThunk(
+  "products/deleteProduct",
+  async (productId, { rejectWithValue }) => {
     const accessToken = cookie.get("access_token");
 
     try {
-      await axios.delete(`${API_URL}/${categoryId}`, {
+      await axios.delete(`${API_URL}/${productId}`, {
         headers: { Authorization: "Bearer " + accessToken },
       });
-      return categoryId;
+      return productId;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to delete category"
+        error.response?.data?.message || "Failed to delete product"
       );
     }
   }
@@ -154,115 +160,111 @@ export const deleteCategory = createAsyncThunk(
 
 // Initial state
 const initialState = {
-  categories: [],
-  currentCategory: null,
+  products: [],
+  currentProduct: null,
   loading: false,
   updateLoading: false,
   error: null,
   success: false,
 };
 
-// Create slice
 const categoriesSlice = createSlice({
-  name: "categories",
+  name: "products",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       // *Get All Categories
-      .addCase(getAllCategories.pending, (state) => {
+      .addCase(getAllProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getAllCategories.fulfilled, (state, action) => {
+      .addCase(getAllProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.categories = action.payload;
+        state.products = action.payload;
         state.error = null;
       })
-      .addCase(getAllCategories.rejected, (state, action) => {
+      .addCase(getAllProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       //* Get Single User
-      .addCase(getCategoryById.pending, (state) => {
+      .addCase(getProductById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getCategoryById.fulfilled, (state, action) => {
+      .addCase(getProductById.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentCategory = action.payload;
+        state.currentProduct = action.payload;
         state.error = null;
       })
-      .addCase(getCategoryById.rejected, (state, action) => {
+      .addCase(getProductById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-
       //* Create User
-      .addCase(createCategory.pending, (state) => {
+      .addCase(createProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
         state.success = false;
       })
-      .addCase(createCategory.fulfilled, (state, action) => {
+      .addCase(createProduct.fulfilled, (state, action) => {
         state.loading = false;
-        if (state.categories) {
-          state.categories.data.push(action.payload.data);
+        if (state.products) {
+          state.products.data.push(action.payload.data);
         }
         state.success = true;
         state.error = null;
       })
-      .addCase(createCategory.rejected, (state, action) => {
+      .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;
       })
-
       //* Update User
-      .addCase(updateCategory.pending, (state) => {
+      .addCase(updateProduct.pending, (state) => {
         state.updateLoading = true;
         state.error = null;
         state.success = false;
       })
-      .addCase(updateCategory.fulfilled, (state, action) => {
+      .addCase(updateProduct.fulfilled, (state, action) => {
         state.updateLoading = false;
-        if (state.categories.data) {
-          const index = state.categories.data.findIndex(
-            (category) => category.id === action.payload.id
+        if (state.products.data) {
+          const index = state.products.data.findIndex(
+            (product) => product.id === action.payload.id
           );
           if (index !== -1) {
-            state.categories.data[index] = action.payload;
+            state.products.data[index] = action.payload;
           }
-          if (state.currentCategory?.id === action.payload.id) {
-            state.currentCategory = action.payload;
+          if (state.currentProduct?.id === action.payload.id) {
+            state.currentProduct = action.payload;
           }
         }
         state.success = true;
         state.error = null;
       })
-      .addCase(updateCategory.rejected, (state, action) => {
+      .addCase(updateProduct.rejected, (state, action) => {
         state.updateLoading = false;
         state.error = action.payload;
         state.success = false;
       })
-
       //* Delete User
-      .addCase(deleteCategory.pending, (state) => {
+      .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
         state.success = false;
       })
-      .addCase(deleteCategory.fulfilled, (state, action) => {
+      .addCase(deleteProduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.categories.data = state.categories.data.filter(
-          (category) => category.id !== action.payload
+        state.products.data = state.products.data.filter(
+          (product) => product.id !== action.payload
         );
 
         state.success = true;
         state.error = null;
       })
-      .addCase(deleteCategory.rejected, (state, action) => {
+      .addCase(deleteProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;

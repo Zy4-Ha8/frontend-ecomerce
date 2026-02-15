@@ -13,6 +13,8 @@ import Products from "./pages/Dashboard/products/Products";
 import AddProduct from "./pages/Dashboard/products/AddProduct";
 import Categories from "./pages/Dashboard/categories/Categories";
 import UpdateUser from "./pages/Dashboard/users/UpdateUser";
+import UpdateCategory from "./pages/Dashboard/categories/UpdateCategory";
+import ReactSelectExamples from "./pages/Dashboard/products/Test";
 function App() {
   return (
     <>
@@ -31,9 +33,11 @@ function App() {
 
             <Route path="add-category" element={<AddCategory />} />
             <Route path="show-categories" element={<Categories />} />
+            <Route path="update-category/:id" element={<UpdateCategory />} />
 
             <Route path="add-product" element={<AddProduct />} />
             <Route path="show-products" element={<Products />} />
+            <Route path="test" element={<ReactSelectExamples />} />
           </Route>
         </Routes>
       </Router>

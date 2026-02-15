@@ -69,6 +69,7 @@ const Users = () => {
         searchStuff={{ search, setSearch }}
         filterBySearch={filterBySearch}
         clearSearch={clearSearch}
+        updatedRoute={"update-user"}
         tableStuff={{ tableActive, setTableActive }}
         cardStuff={{ cardActive, setCardActive }}
       />

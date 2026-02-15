@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("/fonts/Oswald.woff2") format("woff2");
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -120,14 +128,9 @@
 }
 
 @theme {
-  --font-display: "Roboto Condensed", sans-serif;
+  --color-primary: #3a5b22;
+  --font-display: "Poppins", sans-serif;
+  --color-lapis: oklch(0.35 0.15 250);
   --font-display--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   --font-display--font-variation-settings: "opsz" 32;
-}
-@font-face {
-  font-family: "Roboto Condensed";
-  font-style: normal;
-  font-weight: 200 700;
-  font-display: swap;
-  src: url("/fonts/Oswald.woff2") format("woff2");
 }

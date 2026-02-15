@@ -31,7 +31,7 @@ function UpdateUser() {
   });
   const [imagePreview, setImagePreview] = useState(null);
   const errorMessage = users?.error?.message;
-  console.log(errorMessage)
+  console.log(errorMessage);
   const firstInput = useRef(null);
   const [successStatus, setSuccessStatus] = useState(false);
   const inputsContent = [
@@ -113,7 +113,7 @@ function UpdateUser() {
         setImagePreview(null);
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       // navigate("/dashboard/show-users");
     }
   };
@@ -122,7 +122,6 @@ function UpdateUser() {
     <div>
       <DashboardForm
         headerText={"update the user"}
-        
         inputsCotent={inputsContent}
         handleInputChange={handleInputChange}
         formdata={formdata}
@@ -135,6 +134,7 @@ function UpdateUser() {
         errorMessage={errorMessage}
         successStatusStuff={{ successStatus, setSuccessStatus }}
         loadingState={users.loading}
+        updateLoading={users.updateLoading}
       />
     </div>
   );

@@ -1,13 +1,15 @@
 import React from "react";
 import Navbar from "../../components/Navbar";
+import LandingPage from "./LandingPage";
 
 const HomePage = () => {
   return (
     <>
       <Navbar />
-      <div className="font-sans bg-slate-50 text-slate-900">
+      <div className=" flex items-center justify-center">
+        <LandingPage />
         {/* Hero Section */}
-        <section className="bg-slate-900 text-white py-16 px-6 text-center">
+        {/* <section className="bg-slate-900 text-white py-16 px-6 text-center">
           <h1 className="text-4xl font-bold mb-4">Style That Speaks</h1>
           <p className="text-lg mb-6">
             Discover the latest trends in fashion, tailored for you.
@@ -15,10 +17,10 @@ const HomePage = () => {
           <button className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white font-medium">
             Shop Now
           </button>
-        </section>
+        </section> */}
 
         {/* Featured Categories */}
-        <section className="py-12 px-6">
+        {/* <section className="py-12 px-6">
           <h2 className="text-2xl font-semibold mb-6 text-center">
             Shop by Category
           </h2>
@@ -37,10 +39,10 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* Trending Products */}
-        <section className="py-12 px-6 bg-white">
+        {/* <section className="py-12 px-6 bg-white">
           <h2 className="text-2xl font-semibold mb-6 text-center">
             Trending Now
           </h2>
@@ -62,7 +64,7 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
       </div>
     </>
   );
