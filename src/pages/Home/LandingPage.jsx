@@ -1,9 +1,9 @@
 import land from "../../assets/images/landing.jpg";
 const LandingPage = () => {
   return (
-    <div className=" p-4 bg-[#fdfffe] w-full flex justify-between items-center flex-col sm:flex-row lg:h-[70vh]">
+    <div className=" p-4 pb-0 bg-[#fdfffe] w-full flex justify-between items-center flex-col sm:flex-row lg:h-[70vh]">
       {/* text section */}
-      <div className=" lg:w-[50%] h-full flex flex-col justify-around gap-5 p-6 ">
+      <div className=" lg:w-[50%] h-full flex flex-col justify-around gap-5 p-6  ">
         <div className="flex flex-col gap-5 text-center md:text-start ">
           <h1 className=" text-2xl md:text-4xl lg:text-6xl font-extrabold uppercase">
             Find Clothoes That match your style{" "}

@@ -1,13 +1,24 @@
 import React from "react";
 import Navbar from "../../components/Navbar";
 import LandingPage from "./LandingPage";
-
+import BrandSeparator from "./Brandseparator";
+import NewArrivals from "./NewArrivals";
+import TopSalling from "./TopSalling";
+import StyleBrowse from "./StyleBrowse";
+import HappyCustomers from "./HappyCustomers";
+import Footer from "./Footer";
 const HomePage = () => {
   return (
     <>
       <Navbar />
-      <div className=" flex items-center justify-center">
+      <div className=" flex items-center justify-center flex-col">
         <LandingPage />
+        <BrandSeparator />
+        <NewArrivals />
+        <TopSalling />
+        <StyleBrowse />
+        <HappyCustomers />
+        <Footer />
         {/* Hero Section */}
         {/* <section className="bg-slate-900 text-white py-16 px-6 text-center">
           <h1 className="text-4xl font-bold mb-4">Style That Speaks</h1>

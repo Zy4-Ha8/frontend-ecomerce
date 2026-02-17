@@ -41,7 +41,7 @@ function AuthTable({
 
             {inputsMap}
 
-            <button className="bg-[#3a5b22] w-full hover:bg-[#3a5b22d7] cursor-pointer py-2 px-4 rounded-xl  text-white ">
+            <button className="bg-primary w-full hover:bg-[#3a5b22d7] cursor-pointer py-2 px-4 rounded-xl  text-white ">
               {submitButton}
             </button>
             {/* routing */}
